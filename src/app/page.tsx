@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Users } from "@/types/users"
+import { FiDroplet } from "react-icons/fi"
 
 export default function Home() {
   const [users, setUsers] = useState<string>("Loading...")
@@ -18,21 +19,31 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="flex flex-col p-10">
-      <div>Hello {users}!</div>
-      <button
-        onClick={() => (window.location.href = "/feature/air")}
-        className="bg-gray-900 hover:bg-gray-700 text-white text-center p-4 w-[60%] mx-auto rounded-sm shadow-lg"
-      >
-        Update Air Bersih
-      </button>
+    <div className="h-screen">
+      <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center p-8 pb-20 gap-16 sm:p-20">
+        {users === "Loading..." ? (
+          <div className=" text-gray-500">Loading...</div>
+        ) : (
+          <div className="text-white">Hello {users}!</div>
+        )}
+      </div>
+      <div className="grid grid-cols-3 grid-rows-3 gap-2 w-full aspect-[1/1.2] p-5">
+        <button
+          onClick={() => (window.location.href = "/feature/air")}
+          className="flex flex-col items-center justify-around rounded-xl w-full h-full bg-cyan-600 hover:bg-cyan-800 shadow-lg shadow-gray-800 text-white text-xs text-center p-4 mx-auto"
+        >
+          <div>
+            <FiDroplet className="text-white text-2xl" />
+          </div>
+          <div>Status Air Bersih</div>
+        </button>
+        <button className="rounded-xl disable bg-gray-400"></button>
+        <button className="rounded-xl disable bg-gray-400"></button>
+        <button className="rounded-xl disable bg-gray-400"></button>
+        <button className="rounded-xl disable bg-gray-400"></button>
+        <button className="rounded-xl disable bg-gray-400"></button>
+        <button className="rounded-xl disable bg-gray-400"></button>
+      </div>
     </div>
-    // <div className="grid grid-rows-[20px_1fr_20px] mt-[50%] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-    //   {users === "Loading..." ? (
-    //     <div className=" text-gray-500">Loading...</div>
-    //   ) : (
-    //     <div className="text-white">Hello {users}!</div>
-    //   )}
-    // </div>
   )
 }

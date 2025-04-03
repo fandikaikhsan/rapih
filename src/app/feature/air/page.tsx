@@ -25,14 +25,12 @@ export default function Home() {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [consumptionInput, setConsumptionInput] = useState("")
-  const [dateInput, setDateInput] = useState(
-    new Date().toISOString().slice(0, 16)
-  )
-
+  const [dateInput, setDateInput] = useState("")
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    // Ensuring useRouter is used after the component has mounted
+    // Ensuring is used after the component has mounted
+    setDateInput(new Date().toISOString().slice(0, 16))
     setIsClient(true)
   }, [])
 

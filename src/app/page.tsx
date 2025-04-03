@@ -27,7 +27,17 @@ export default function Home() {
           <div className="text-white">Hello {users}!</div>
         )}
       </div>
-      <div className="grid grid-cols-3 grid-rows-3 gap-2 w-full aspect-[1/1.2] p-5">
+      <div className="relative bg-gradient-to-bl from-[#FFC914] to-yellow-600 py-3 px-4 rounded-lg shadow-lg mx-5">
+        <h1 className="w-fit bg-[#E4572E] rounded-lg py-1 px-2 text-left text-xs mb-2 text-white backdrop-blur-md">
+          Apa kata Pak RT?
+        </h1>
+        <p className="text-left text-xs text-black ">
+          Acara halal bihalal akan dilaksanakan pada hari Minggu, 10 September
+          2023.
+        </p>
+      </div>
+      <div className="mx-7 mt-6 text-xl">Pilih Fitur</div>
+      <div className="grid grid-cols-3 grid-rows-3 gap-2 w-full aspect-[1/1.2] px-5 py-3">
         <button
           onClick={() => (window.location.href = "/feature/air")}
           className="flex flex-col items-center justify-around rounded-xl w-full h-full bg-cyan-600 hover:bg-cyan-800 shadow-lg shadow-gray-800 text-white text-xs text-center p-4 mx-auto"

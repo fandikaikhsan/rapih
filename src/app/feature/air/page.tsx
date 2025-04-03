@@ -14,12 +14,12 @@ export default function Home() {
     lastUpdated: "2025-04-01 10:00",
     estimatedCost: 15000,
     history: [
-      { consumption: 200, date: "2025-03-01 10:00", status: true },
+      { consumption: 200, date: "2025-03-01 10:00", status: false },
       { consumption: 180, date: "2025-02-15 09:00", status: false },
       { consumption: 210, date: "2025-01-20 14:00", status: true },
-      { consumption: 190, date: "2024-12-25 13:30", status: false },
+      { consumption: 190, date: "2024-12-25 13:30", status: true },
       { consumption: 210, date: "2024-11-20 12:00", status: true },
-      { consumption: 220, date: "2024-10-15 08:30", status: false },
+      { consumption: 220, date: "2024-10-15 08:30", status: true },
     ],
   })
 

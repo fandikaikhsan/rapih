@@ -1,10 +1,12 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import WaterConsumptionSummary from "@/components/air/SummaryCard"
 import { WaterConsumptionUserData } from "@/types/users"
+import { FaArrowLeft } from "react-icons/fa"
+import WaterConsumptionModal from "@/components/air/WaterConsumptionModal"
+import Link from "next/link"
 
 export default function Home() {
-  // Sample user data for a single user
   const [user, setUser] = useState<WaterConsumptionUserData>({
     name: "Fandika Ikhsan",
     monthlyConsumption: 250,
@@ -12,48 +14,34 @@ export default function Home() {
     lastUpdated: "2025-04-01 10:00",
     estimatedCost: 15000,
     history: [
-      {
-        consumption: 200,
-        date: "2025-03-01 10:00",
-      },
-      {
-        consumption: 180,
-        date: "2025-02-15 09:00",
-      },
-      {
-        consumption: 210,
-        date: "2025-01-20 14:00",
-      },
-      {
-        consumption: 190,
-        date: "2024-12-25 13:30",
-      },
-      {
-        consumption: 210,
-        date: "2024-11-20 12:00",
-      },
-      {
-        consumption: 220,
-        date: "2024-10-15 08:30",
-      },
+      { consumption: 200, date: "2025-03-01 10:00", status: true },
+      { consumption: 180, date: "2025-02-15 09:00", status: false },
+      { consumption: 210, date: "2025-01-20 14:00", status: true },
+      { consumption: 190, date: "2024-12-25 13:30", status: false },
+      { consumption: 210, date: "2024-11-20 12:00", status: true },
+      { consumption: 220, date: "2024-10-15 08:30", status: false },
     ],
   })
 
-  // Modal visibility and form states
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [consumptionInput, setConsumptionInput] = useState("")
   const [dateInput, setDateInput] = useState(
     new Date().toISOString().slice(0, 16)
   )
 
-  // Handle update button click
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    // Ensuring useRouter is used after the component has mounted
+    setIsClient(true)
+  }, [])
+
   const handleUpdate = () => {
-    setConsumptionInput("")
-    setDateInput(new Date().toISOString().slice(0, 16)) // default current date and time
-    setIsModalOpen(true)
+    setConsumptionInput("") // Reset consumption input
+    setDateInput(new Date().toISOString().slice(0, 16)) // Set default current date
+    setIsModalOpen(true) // Open modal
   }
 
-  // Handle save data from modal
   const handleSave = () => {
     const updatedUser = {
       ...user,
@@ -62,6 +50,7 @@ export default function Home() {
         {
           consumption: parseFloat(consumptionInput),
           date: dateInput,
+          status: true, // Set default status as "Sudah Dibayar"
         },
       ],
       monthlyConsumption: parseFloat(consumptionInput),
@@ -69,236 +58,89 @@ export default function Home() {
       totalConsumption: user.totalConsumption + parseFloat(consumptionInput),
     }
     setUser(updatedUser)
-    setIsModalOpen(false)
+    setIsModalOpen(false) // Close modal after save
   }
 
-  // WhatsApp link for sending data
-  const handleSendWhatsApp = () => {
-    const message = `Hi, I would like to update my water consumption data: %0AName: ${user.name}%0AMonthly Consumption: ${user.monthlyConsumption} L%0ATotal Consumption: ${user.totalConsumption} L%0ALast Updated: ${user.lastUpdated}%0AEarly Estimated Cost: ${user.estimatedCost} IDR`
-    const url = `https://wa.me/6282126666440?text=${message}` // Replace with the actual WhatsApp number
-    window.open(url, "_blank")
-  }
-
-  // Function to convert date to month in Indonesian
-  const getMonthInIndonesian = (date: string) => {
-    const monthsInIndonesian = [
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
-    ]
-    const monthIndex = new Date(date).getMonth()
-    return monthsInIndonesian[monthIndex]
+  const handleCancel = () => {
+    setIsModalOpen(false) // Close modal without saving
   }
 
   return (
-    <div
-      style={{
-        backgroundColor: "#121212",
-        color: "#fff",
-        minHeight: "100vh",
-        padding: "20px",
-      }}
-    >
-      {/* Summary Card */}
-      <WaterConsumptionSummary user={user} />
-
-      {/* History Table with Scroll */}
-      <div
-        style={{
-          maxHeight: "400px", // Adjust max height for the scrollable area
-          overflowY: "auto",
-          marginTop: "10px",
-          border: "1px solid #444",
-          borderRadius: "8px",
-          display: "block",
-          fontSize: "14px",
-        }}
-      >
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th style={{ padding: "10px", borderBottom: "1px solid #444" }}>
-                Waktu Diperbaharui
-              </th>
-              <th style={{ padding: "10px", borderBottom: "1px solid #444" }}>
-                Konsumsi Air
-              </th>
-              <th style={{ padding: "10px", borderBottom: "1px solid #444" }}>
-                Bulan
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* Display only the last 4 history entries */}
-            {user.history.slice(-4).map((entry, index) => (
-              <tr key={index}>
-                <td style={{ padding: "10px" }}>{entry.date}</td>
-                <td style={{ padding: "10px" }}>{entry.consumption} L</td>
-                <td style={{ padding: "10px" }}>
-                  {getMonthInIndonesian(entry.date)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Action Buttons - These buttons are always displayed at the bottom */}
-      <div
-        style={{
-          marginTop: "20px",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <div
-          style={{
-            marginBottom: "10px",
-            width: "100%",
-            maxWidth: "200px",
-            position: "absolute",
-            bottom: "20px",
-          }}
-        >
-          <button
-            onClick={handleUpdate}
-            style={{
-              padding: "10px 20px",
-              backgroundColor: "#007BFF",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-              width: "100%",
-              marginBottom: "10px",
-              fontSize: "12px",
-            }}
-          >
-            Perbaharui
-          </button>
-          <button
-            onClick={handleSendWhatsApp}
-            style={{
-              padding: "10px 20px",
-              backgroundColor: "#25D366",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-              width: "100%",
-              fontSize: "12px",
-            }}
-          >
-            Pembayaran ke WhatsApp
-          </button>
-        </div>
-      </div>
-
-      {/* Modal */}
-      {isModalOpen && (
-        <div
-          onClick={() => setIsModalOpen(false)}
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.6)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              backgroundColor: "#333",
-              padding: "20px",
-              borderRadius: "8px",
-              width: "300px",
-              color: "white",
-            }}
-          >
-            <h3>Update Konsumsi Air</h3>
-            <label>Konsumsi (liter)</label>
-            <input
-              type="number"
-              value={consumptionInput}
-              onChange={(e) => setConsumptionInput(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "8px",
-                margin: "10px 0",
-                borderRadius: "5px",
-                border: "1px solid #555",
-              }}
-            />
-            <label>Tanggal</label>
-            <input
-              type="datetime-local"
-              value={dateInput}
-              onChange={(e) => setDateInput(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "8px",
-                margin: "10px 0",
-                borderRadius: "5px",
-                border: "1px solid #555",
-              }}
-            />
-            <div
-              style={{
-                display: "flex",
-                flexFlow: "column",
-                gap: "10px",
-                justifyContent: "space-between",
-                marginTop: "10px",
-              }}
-            >
-              <button
-                onClick={handleSave}
-                style={{
-                  backgroundColor: "#28a745",
-                  color: "white",
-                  padding: "5px 10px",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                  width: "100%",
-                  fontSize: "14px",
-                }}
-              >
-                Simpan
-              </button>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                style={{
-                  backgroundColor: "#dc3545",
-                  color: "white",
-                  padding: "5px 10px",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                  width: "100%",
-                  fontSize: "14px",
-                }}
-              >
-                Batalkan
-              </button>
-            </div>
-          </div>
+    <div className="bg-black text-white min-h-screen p-5">
+      {/* Back Arrow */}
+      {isClient && (
+        <div className="flex items-center mb-5">
+          <Link href="/" className="text-white text-xl">
+            <FaArrowLeft />
+          </Link>
         </div>
       )}
+
+      <WaterConsumptionSummary user={user} />
+      <div className="mt-5 border border-gray-700 rounded-lg overflow-hidden">
+        <div className="overflow-x-auto max-h-64 overflow-y-auto">
+          <table className="w-full border-collapse text-xs">
+            <thead className="sticky top-0 bg-black">
+              <tr className="bg-gray-900 text-left">
+                <th className="p-3">Waktu Diperbaharui</th>
+                <th className="p-3">Konsumsi Air</th>
+                <th className="p-3">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {user.history.slice(-5).map((entry, index) => (
+                <tr key={index} className="border-t border-gray-800">
+                  <td className="p-3 whitespace-nowrap">{entry.date}</td>
+                  <td className="p-3 whitespace-nowrap">
+                    {entry.consumption} L
+                  </td>
+                  <td className="p-3">
+                    <div
+                      className={`px-2 py-1 text-center text-xs rounded-full ${
+                        entry.status
+                          ? "bg-green-500 text-white"
+                          : "bg-red-500 text-white"
+                      }`}
+                    >
+                      {entry.status ? "Sudah Bayar" : "Belum Bayar"}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="mt-5 flex justify-center space-x-4">
+        <button
+          onClick={handleUpdate}
+          className="bg-blue-500 text-sm text-white px-4 py-2 rounded-md"
+        >
+          Perbaharui
+        </button>
+        <button
+          onClick={() => {
+            const message = `Hi, I would like to update my water consumption data: %0AName: ${user.name}%0AMonthly Consumption: ${user.monthlyConsumption} L%0ATotal Consumption: ${user.totalConsumption} L%0ALast Updated: ${user.lastUpdated}%0AEarly Estimated Cost: ${user.estimatedCost} IDR`
+            const url = `https://wa.me/6282126666440?text=${message}`
+            window.open(url, "_blank")
+          }}
+          className="bg-green-500 text-sm text-white px-4 py-2 rounded-md"
+        >
+          Pembayaran ke WhatsApp
+        </button>
+      </div>
+
+      {/* Modal Component */}
+      <WaterConsumptionModal
+        isModalOpen={isModalOpen}
+        handleCancel={handleCancel}
+        handleSave={handleSave}
+        consumptionInput={consumptionInput}
+        setConsumptionInput={setConsumptionInput}
+        dateInput={dateInput}
+        setDateInput={setDateInput}
+      />
     </div>
   )
 }

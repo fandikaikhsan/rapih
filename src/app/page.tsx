@@ -19,6 +19,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col p-10">
+      <div>Hello {users}!</div>
       <button
         onClick={() => (window.location.href = "/feature/air")}
         className="bg-gray-900 hover:bg-gray-700 text-white text-center p-4 w-[60%] mx-auto rounded-sm shadow-lg"

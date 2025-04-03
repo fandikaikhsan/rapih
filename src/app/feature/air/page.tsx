@@ -198,7 +198,7 @@ export default function Home() {
               fontSize: "12px",
             }}
           >
-            Kirim ke WhatsApp
+            Pembayaran ke WhatsApp
           </button>
         </div>
       </div>
@@ -259,6 +259,8 @@ export default function Home() {
             <div
               style={{
                 display: "flex",
+                flexFlow: "column",
+                gap: "10px",
                 justifyContent: "space-between",
                 marginTop: "10px",
               }}
@@ -273,7 +275,7 @@ export default function Home() {
                   borderRadius: "5px",
                   cursor: "pointer",
                   width: "100%",
-                  fontSize: "10px",
+                  fontSize: "14px",
                 }}
               >
                 Simpan
@@ -288,10 +290,10 @@ export default function Home() {
                   borderRadius: "5px",
                   cursor: "pointer",
                   width: "100%",
-                  fontSize: "10px",
+                  fontSize: "14px",
                 }}
               >
-                Tutup
+                Batalkan
               </button>
             </div>
           </div>

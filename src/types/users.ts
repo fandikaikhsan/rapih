@@ -13,5 +13,6 @@ export type WaterConsumptionUserData = {
   history: {
     consumption: number
     date: string
+    status: boolean
   }[]
 }

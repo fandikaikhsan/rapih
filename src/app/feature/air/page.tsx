@@ -1,44 +1,53 @@
 "use client"
 import { useState } from "react"
-
-type UserData = {
-  name: string
-  monthlyConsumption: number
-  totalConsumption: number
-  lastUpdated: string
-  estimatedCost: number
-}
+import WaterConsumptionSummary from "@/components/air/SummaryCard"
+import { WaterConsumptionUserData } from "@/types/users"
 
 export default function Home() {
-  // Sample user data (you can later fetch this from an API)
-  const [data, setData] = useState<UserData[]>([
-    {
-      name: "John Doe",
-      monthlyConsumption: 250,
-      totalConsumption: 5000,
-      lastUpdated: "2025-04-01 10:00",
-      estimatedCost: 15,
-    },
-    {
-      name: "Jane Smith",
-      monthlyConsumption: 180,
-      totalConsumption: 3600,
-      lastUpdated: "2025-04-01 09:30",
-      estimatedCost: 12,
-    },
-  ])
+  // Sample user data for a single user
+  const [user, setUser] = useState<WaterConsumptionUserData>({
+    name: "Fandika Ikhsan",
+    monthlyConsumption: 250,
+    totalConsumption: 5000,
+    lastUpdated: "2025-04-01 10:00",
+    estimatedCost: 15000,
+    history: [
+      {
+        consumption: 200,
+        date: "2025-03-01 10:00",
+      },
+      {
+        consumption: 180,
+        date: "2025-02-15 09:00",
+      },
+      {
+        consumption: 210,
+        date: "2025-01-20 14:00",
+      },
+      {
+        consumption: 190,
+        date: "2024-12-25 13:30",
+      },
+      {
+        consumption: 210,
+        date: "2024-11-20 12:00",
+      },
+      {
+        consumption: 220,
+        date: "2024-10-15 08:30",
+      },
+    ],
+  })
 
   // Modal visibility and form states
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<UserData | null>(null)
   const [consumptionInput, setConsumptionInput] = useState("")
   const [dateInput, setDateInput] = useState(
     new Date().toISOString().slice(0, 16)
   )
 
   // Handle update button click
-  const handleUpdate = (user: UserData) => {
-    setSelectedUser(user)
+  const handleUpdate = () => {
     setConsumptionInput("")
     setDateInput(new Date().toISOString().slice(0, 16)) // default current date and time
     setIsModalOpen(true)
@@ -46,26 +55,48 @@ export default function Home() {
 
   // Handle save data from modal
   const handleSave = () => {
-    if (selectedUser) {
-      const updatedData = data.map((user) =>
-        user.name === selectedUser.name
-          ? {
-              ...user,
-              monthlyConsumption: parseFloat(consumptionInput),
-              lastUpdated: dateInput,
-            }
-          : user
-      )
-      setData(updatedData)
+    const updatedUser = {
+      ...user,
+      history: [
+        ...user.history,
+        {
+          consumption: parseFloat(consumptionInput),
+          date: dateInput,
+        },
+      ],
+      monthlyConsumption: parseFloat(consumptionInput),
+      lastUpdated: dateInput,
+      totalConsumption: user.totalConsumption + parseFloat(consumptionInput),
     }
+    setUser(updatedUser)
     setIsModalOpen(false)
   }
 
   // WhatsApp link for sending data
-  const handleSendWhatsApp = (user: UserData) => {
+  const handleSendWhatsApp = () => {
     const message = `Hi, I would like to update my water consumption data: %0AName: ${user.name}%0AMonthly Consumption: ${user.monthlyConsumption} L%0ATotal Consumption: ${user.totalConsumption} L%0ALast Updated: ${user.lastUpdated}%0AEarly Estimated Cost: ${user.estimatedCost} IDR`
-    const url = `https://wa.me/1234567890?text=${message}` // Replace with the actual WhatsApp number
+    const url = `https://wa.me/6282126666440?text=${message}` // Replace with the actual WhatsApp number
     window.open(url, "_blank")
+  }
+
+  // Function to convert date to month in Indonesian
+  const getMonthInIndonesian = (date: string) => {
+    const monthsInIndonesian = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ]
+    const monthIndex = new Date(date).getMonth()
+    return monthsInIndonesian[monthIndex]
   }
 
   return (
@@ -77,39 +108,49 @@ export default function Home() {
         padding: "20px",
       }}
     >
-      <h1>Water Consumption Tracker</h1>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr>
-            <th style={{ padding: "10px", borderBottom: "1px solid #444" }}>
-              Nama Warga
-            </th>
-            <th style={{ padding: "10px", borderBottom: "1px solid #444" }}>
-              Konsumsi Air Bulan Ini (L)
-            </th>
-            <th style={{ padding: "10px", borderBottom: "1px solid #444" }}>
-              Konsumsi Air Total (L)
-            </th>
-            <th style={{ padding: "10px", borderBottom: "1px solid #444" }}>
-              Terakhir Diperbaharui
-            </th>
-            <th style={{ padding: "10px", borderBottom: "1px solid #444" }}>
-              Estimasi Biaya Bulan Ini (IDR)
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((user, index) => (
-            <tr key={index}>
-              <td style={{ padding: "10px" }}>{user.name}</td>
-              <td style={{ padding: "10px" }}>{user.monthlyConsumption}</td>
-              <td style={{ padding: "10px" }}>{user.totalConsumption}</td>
-              <td style={{ padding: "10px" }}>{user.lastUpdated}</td>
-              <td style={{ padding: "10px" }}>{user.estimatedCost}</td>
+      {/* Summary Card */}
+      <WaterConsumptionSummary user={user} />
+
+      {/* History Table with Scroll */}
+      <div
+        style={{
+          maxHeight: "400px", // Adjust max height for the scrollable area
+          overflowY: "auto",
+          marginTop: "10px",
+          border: "1px solid #444",
+          borderRadius: "8px",
+          display: "block",
+          fontSize: "14px",
+        }}
+      >
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr>
+              <th style={{ padding: "10px", borderBottom: "1px solid #444" }}>
+                Waktu Diperbaharui
+              </th>
+              <th style={{ padding: "10px", borderBottom: "1px solid #444" }}>
+                Konsumsi Air
+              </th>
+              <th style={{ padding: "10px", borderBottom: "1px solid #444" }}>
+                Bulan
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {/* Display only the last 4 history entries */}
+            {user.history.slice(-4).map((entry, index) => (
+              <tr key={index}>
+                <td style={{ padding: "10px" }}>{entry.date}</td>
+                <td style={{ padding: "10px" }}>{entry.consumption} L</td>
+                <td style={{ padding: "10px" }}>
+                  {getMonthInIndonesian(entry.date)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* Action Buttons - These buttons are always displayed at the bottom */}
       <div
@@ -117,12 +158,19 @@ export default function Home() {
           marginTop: "20px",
           display: "flex",
           justifyContent: "center",
-          flexWrap: "wrap",
         }}
       >
-        <div style={{ marginBottom: "10px", width: "100%", maxWidth: "200px" }}>
+        <div
+          style={{
+            marginBottom: "10px",
+            width: "100%",
+            maxWidth: "200px",
+            position: "absolute",
+            bottom: "20px",
+          }}
+        >
           <button
-            onClick={() => handleUpdate(data[0])} // Use the first user for simplicity or add a selection mechanism
+            onClick={handleUpdate}
             style={{
               padding: "10px 20px",
               backgroundColor: "#007BFF",
@@ -132,12 +180,13 @@ export default function Home() {
               cursor: "pointer",
               width: "100%",
               marginBottom: "10px",
+              fontSize: "12px",
             }}
           >
             Perbaharui
           </button>
           <button
-            onClick={() => handleSendWhatsApp(data[0])} // Use the first user for simplicity
+            onClick={handleSendWhatsApp}
             style={{
               padding: "10px 20px",
               backgroundColor: "#25D366",
@@ -146,6 +195,7 @@ export default function Home() {
               borderRadius: "5px",
               cursor: "pointer",
               width: "100%",
+              fontSize: "12px",
             }}
           >
             Kirim ke WhatsApp
@@ -223,6 +273,7 @@ export default function Home() {
                   borderRadius: "5px",
                   cursor: "pointer",
                   width: "100%",
+                  fontSize: "10px",
                 }}
               >
                 Simpan
@@ -237,7 +288,7 @@ export default function Home() {
                   borderRadius: "5px",
                   cursor: "pointer",
                   width: "100%",
-                  marginTop: "10px",
+                  fontSize: "10px",
                 }}
               >
                 Tutup

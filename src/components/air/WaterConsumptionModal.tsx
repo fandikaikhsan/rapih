@@ -26,7 +26,7 @@ const WaterConsumptionModal: React.FC<WaterConsumptionModalProps> = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-gray-900 m-5 p-6 rounded-md w-96"
+        className="bg-[#151515] m-5 p-6 rounded-md w-96"
       >
         <h3 className="text-base mb-6 text-center text-white">
           Update Konsumsi Air

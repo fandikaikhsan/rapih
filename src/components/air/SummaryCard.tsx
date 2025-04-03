@@ -7,7 +7,7 @@ export default function WaterConsumptionSummary({
   user: WaterConsumptionUserData
 }) {
   return (
-    <div className="p-4 border border-gray-500 rounded-xl text-white">
+    <div className="p-4  bg-[#151515] rounded-xl text-white">
       {/* Summary Section */}
       <div className="mb-2">
         <h3 className="text-base text-gray-30 mx-auto">

@@ -81,7 +81,7 @@ export default function Home() {
         <div className="overflow-x-auto max-h-64 overflow-y-auto">
           <table className="w-full border-collapse text-xs">
             <thead className="sticky top-0 bg-black">
-              <tr className="bg-gray-900 text-left">
+              <tr className="bg-[#151515] text-left">
                 <th className="p-3">Waktu Diperbaharui</th>
                 <th className="p-3">Konsumsi Air</th>
                 <th className="p-3">Status</th>
